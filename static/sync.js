@@ -8,12 +8,19 @@ navigator.id.watch({
   onlogin: function(assertion) {
     // verify the assertion
     $.post('/verify', {assertion: assertion},
-      success: onValidAssertion,
-      error: onAssertionFailure
+      success: function(email) {
+        currentUser = email;
+        $('loading').hide();
+        $('sign-out').toggle();
+        $('sign-in').toggle();
+      }
     );
-
   },
   onlogout: function() {
+    currentUser = null;
+    $('loading').hide();
+    $('sign-out').toggle();
+    $('sign-in').toggle();
   }
 });
 
