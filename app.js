@@ -4,8 +4,8 @@ const ejs = require('ejs'),
   https = require('https'),
   qs = require('qs');
 
-var app = express.createServer(),
-  tpl = fs.readFileSync(__dirname + '/tpl.ejs'),
+var app = express(),
+  tpl = fs.readFileSync(__dirname + '/tpl.ejs', 'utf8'),
   scheme = process.env['SCHEME'] || 'http',
   hostname = process.env['HOSTNAME'] || 'personaexample.com',
   port = process.env['PORT'] || 8888,
@@ -13,16 +13,18 @@ var app = express.createServer(),
   audience = scheme + '://' + hostname + ':' + port;
 
 app.get('/sync', function(req, res) {
-  return ejs.render(tpl, {
+  var rendered = ejs.render(tpl, {
     scriptName: 'sync.js',
     includeSnippet: true
   });
+  res.send(rendered);
 });
 
 app.get('/static', express.static(__dirname + '/static'));
 
 app.get('/async', function(req, res) {
-  return ejs.render(tpl, {scriptName: 'async.js'});
+  var rendered = ejs.render(tpl, {scriptName: 'async.js'});
+  res.send(rendered);
 });
 
 // verifier code lifted from https://github.com/mozilla/browserid-cookbook
