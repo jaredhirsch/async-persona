@@ -20,7 +20,7 @@ app.get('/sync', function(req, res) {
   res.send(rendered);
 });
 
-app.get('/static', express.static(__dirname + '/static'));
+app.use('/static', express.static('static'));
 
 app.get('/async', function(req, res) {
   var rendered = ejs.render(tpl, {scriptName: 'async.js'});
