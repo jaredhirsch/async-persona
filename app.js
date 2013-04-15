@@ -1,8 +1,7 @@
 const ejs = require('ejs'),
   express = require('express'),
   fs = require('fs'),
-  https = require('https'),
-  qs = require('qs');
+  https = require('https');
 
 var app = express(),
   tpl = fs.readFileSync(__dirname + '/tpl.ejs', 'utf8'),
@@ -12,6 +11,9 @@ var app = express(),
   // audience example: "http://personaexample.com:8888"
   audience = scheme + '://' + hostname + ':' + port;
 
+app.use('/static', express.static('static'));
+app.use(express.bodyParser());
+
 app.get('/sync', function(req, res) {
   var rendered = ejs.render(tpl, {
     scriptName: 'sync.js',
@@ -20,7 +22,6 @@ app.get('/sync', function(req, res) {
   res.send(rendered);
 });
 
-app.use('/static', express.static('static'));
 
 app.get('/async', function(req, res) {
   var rendered = ejs.render(tpl, {scriptName: 'async.js'});
@@ -28,30 +29,11 @@ app.get('/async', function(req, res) {
 });
 
 // verifier code lifted from https://github.com/mozilla/browserid-cookbook
-app.get('/verify', function(req, res) {
-  function onVerifierResponse(vres) {
-    var data = '';
-    vres.setEncoding('utf8');
-    vres.on('data', function(chunk) { data += chunk });
-    vres.on('end', function() {
-      var verified = JSON.parse(data);
-      res.contentType('application/json');
-      if (verified.status == 'okay') {
-        console.info('browserid auth successful');
-        req.session.email = verified.email;
-        res.redirect('/'); // TODO do I need this redirect?
-      } else {
-        console.error(verified.reason);
-        res.writeHead(403);
-      }
-      res.write(data);
-      res.end();
-    });
-  }
+app.post('/verify', function(req, res) {
 
   console.info('verifying assertion with persona hosted verifier');
   var assertion = req.body.assertion,
-    body = qs.stringify({
+    body = JSON.stringify({
       assertion: assertion,
       audience: audience
     }),
@@ -63,9 +45,28 @@ app.get('/verify', function(req, res) {
         'content-type': 'application/x-www-form-urlencoded',
         'content-length': body.length
       }
-    }, onVerifierResponse);
+    }, function onVerifierResponse(vres) {
+      // vres.setEncoding('utf8');
+      var data = '';
+      vres.on('data', function(chunk) { data += chunk });
+      vres.on('end', function() {
+        //res.contentType('application/json');
+        var email = JSON.parse(data).email;
+        if (email) {
+          console.info('browserid auth successful');
+          res.json(email); 
+        } else {
+          console.error(verified.reason);
+          res.writeHead(403);
+        }
+//        res.write(data);
+        res.end();
+      });
+    });
   request.write(body);
+  console.info('body is ' + body);
   request.end();
 });
+
 
 app.listen(port, hostname);
