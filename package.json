@@ -1,0 +1,22 @@
+{
+  "name": "async-persona",
+  "author": "Jared Hirsch <ohai@6a68.net>",
+  "version": "0.0.1",
+  "homepage": "https://github.com/6a68/async-persona",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/6a68/async-persona.git"
+  },
+  "bugs": {
+    "url": "https://github.com/6a68/async-persona/issues"
+  },
+  "description": "prototyping async persona snippet by example",
+  "dependencies": {
+    "ejs": "~0.8.3",
+    "express": "~3.1.2",
+    "qs": "~0.5.6"
+  },
+  "scripts": {
+    "start": "node ./app.js"
+  }
+}
