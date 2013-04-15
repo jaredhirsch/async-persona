@@ -16,6 +16,8 @@ app.get('/sync', function(req, res) {
   return ejs.render(tpl, {scriptName: 'sync.js'});
 });
 
+app.get('/static', express.static(__dirname + '/static'));
+
 app.get('/async', function(req, res) {
   return ejs.render(tpl, {scriptName: 'async.js'});
 });
