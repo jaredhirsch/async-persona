@@ -8,28 +8,36 @@ navigator.id.watch({
   onlogin: function(assertion) {
     // verify the assertion
     $.post('/verify', {assertion: assertion},
-      success: function(email) {
+      function success(email) {
         currentUser = email;
-        $('loading').hide();
-        $('sign-out').toggle();
-        $('sign-in').toggle();
+        $('.loading').hide();
+        $('.signed-out').hide();
+        $('.signed-in').show();
       }
     );
   },
   onlogout: function() {
     currentUser = null;
-    $('loading').hide();
-    $('sign-out').toggle();
-    $('sign-in').toggle();
+    $('.loading').hide();
+    $('.signed-in').hide();
+    $('.signed-out').show();
+  },
+  // if it's a match, we're logged out.
+  onmatch: function() {
+    $('.loading').hide();
+    $('.signed-in').hide();
+    $('.signed-out').show();
   }
 });
 
 // 2. wire up DOM handlers
-$('sign-out').click(function(e) {
+$('.sign-out').click(function(e) {
   e.preventDefault();
   navigator.id.logout();
 });
-$('sign-in').click(function(e) {
+$('.sign-in').click(function(e) {
   e.preventDefault();
   navigator.id.request();
+});
+
 });
