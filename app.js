@@ -13,7 +13,10 @@ var app = express.createServer(),
   audience = scheme + '://' + hostname + ':' + port;
 
 app.get('/sync', function(req, res) {
-  return ejs.render(tpl, {scriptName: 'sync.js'});
+  return ejs.render(tpl, {
+    scriptName: 'sync.js',
+    includeSnippet: true
+  });
 });
 
 app.get('/static', express.static(__dirname + '/static'));

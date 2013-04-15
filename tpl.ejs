@@ -1,0 +1,20 @@
+/* params: scriptName */
+<!doctype html>
+<title>async persona ftw</title>
+<style>
+.loading, .signed-in, .signed-out {
+  width: 300px;
+  border: 1px solid black;
+}
+/* hide these states initially */
+.signed-in, .signed-out { display: none; }
+</style>
+<% if (includeSnippet) { %>
+<script src="https://login.persona.org/include.js"></script>
+<% } %>
+<script src="static/jquery-1.9.1.js"></script>
+<script src="static/<%- scriptName -%>"></script>
+<div class="loading">Loading...</div>
+<div class="signed-in">Status: signed in. <a href="/" class="sign-out">Click to sign out.</a></div>
+<div class="signed-out">Status: signed out. <a href="/" class="sign-in">Click to sign in.</a></div>
+
