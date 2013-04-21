@@ -1,6 +1,7 @@
 $(document).ready(function() {
 
 var currentUser = null; // WARNING: it's gotta be null, not undefined
+var loginFired;
 
 // 1. wire up nav.id callback handlers & start watch()
 navigator.id.watch({
@@ -10,6 +11,7 @@ navigator.id.watch({
     $.post('/verify', {assertion: assertion},
       function success(email) {
         currentUser = email;
+        loginFired = true;
         $('.loading').hide();
         $('.signed-out').hide();
         $('.signed-in').show();
@@ -18,12 +20,15 @@ navigator.id.watch({
   },
   onlogout: function() {
     currentUser = null;
+    loginFired = false;
     $('.loading').hide();
     $('.signed-in').hide();
     $('.signed-out').show();
   },
-  // if it's a match, we're logged out.
+  // XXX due to browserid bug #3170, have to ignore onmatch if the last
+  // callback to fire was onlogin.
   onmatch: function() {
+    if (loginFired) return;
     $('.loading').hide();
     $('.signed-in').hide();
     $('.signed-out').show();
